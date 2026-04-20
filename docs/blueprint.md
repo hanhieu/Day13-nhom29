@@ -3,8 +3,8 @@
 > **Instruction**: Fill in all sections below. This report is designed to be parsed by an automated grading assistant. Ensure all tags (e.g., `[GROUP_NAME]`) are preserved.
 
 ## 1. Team Metadata
-- [GROUP_NAME]: 
-- [REPO_URL]: 
+- [GROUP_NAME]: NHÓM 20.5
+- [REPO_URL]: https://github.com/hanhieu/Day13-nhom20.5
 - [MEMBERS]:
   - Member A: Phan Anh Khôi - 2A202600276 | Role: Logging & PII
   - Member B: Nguyễn Hữu Quang - 2A202600167 | Role: Tracing & Tags
