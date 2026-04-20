@@ -2,15 +2,15 @@ alerts:
   # Latency-based alerts
   - name: high_latency_p95
     severity: P2
-    condition: latency_p95_ms > 3000 for 5m
+    condition: latency_p95_ms > 5000 for 5m
     type: symptom-based
     owner: team-oncall
     runbook: docs/alerts.md#1-high-latency-p95
-    description: "P95 latency exceeds SLO threshold of 3000ms"
+    description: "P95 latency exceeds SLO threshold of 5000ms"
     
   - name: extreme_latency_p99
     severity: P1
-    condition: latency_p99_ms > 10000 for 2m
+    condition: latency_p99_ms > 15000 for 2m
     type: symptom-based
     owner: team-oncall
     runbook: docs/alerts.md#1-extreme-latency-p99
@@ -19,11 +19,11 @@ alerts:
   # Error rate alerts
   - name: high_error_rate
     severity: P1
-    condition: error_rate_pct > 2 for 3m
+    condition: error_rate_pct > 5.0 for 3m
     type: symptom-based
     owner: team-oncall
     runbook: docs/alerts.md#2-high-error-rate
-    description: "Error rate exceeds SLO threshold of 2%"
+    description: "Error rate exceeds SLO threshold of 5.0%"
     
   - name: critical_error_rate
     severity: P0
@@ -44,20 +44,20 @@ alerts:
     
   - name: daily_cost_budget_exceeded
     severity: P1
-    condition: daily_cost_usd > 2.5 for 1h
+    condition: daily_cost_usd > 5.0 for 1h
     type: symptom-based
     owner: finops-owner
     runbook: docs/alerts.md#3-daily-cost-budget-exceeded
-    description: "Daily cost budget of $2.50 exceeded"
+    description: "Daily cost budget of $5.00 exceeded"
 
   # Quality alerts
   - name: low_quality_score
     severity: P2
-    condition: quality_score_avg < 0.75 for 10m
+    condition: quality_score_avg < 0.80 for 10m
     type: symptom-based
     owner: team-oncall
     runbook: docs/alerts.md#4-low-quality-score
-    description: "Average quality score below SLO threshold of 0.75"
+    description: "Average quality score below SLO threshold of 0.80"
     
   - name: critical_quality_degradation
     severity: P1
