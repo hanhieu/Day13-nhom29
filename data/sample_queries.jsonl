@@ -8,3 +8,8 @@
 {"user_id":"u08","session_id":"s08","feature":"qa","message":"How do I debug tail latency?"}
 {"user_id":"u09","session_id":"s09","feature":"qa","message":"What is the policy for PII and credit card 4111 1111 1111 1111?"}
 {"user_id":"u10","session_id":"s10","feature":"qa","message":"How should alerts be designed?"}
+{"user_id":"u11","session_id":"s11","feature":"qa","message":"Explain the refund process step by step"}
+{"user_id":"u12","session_id":"s12","feature":"summary","message":"What is the difference between P50 P95 and P99 latency?"}
+{"user_id":"u13","session_id":"s13","feature":"qa","message":"How does the monitoring pipeline detect anomalies?"}
+{"user_id":"u14","session_id":"s14","feature":"qa","message":"My CCCD is 012345678901, can you look up my account?"}
+{"user_id":"u15","session_id":"s15","feature":"summary","message":"Summarize best practices for structured logging in production"}
