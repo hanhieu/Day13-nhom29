@@ -30,7 +30,7 @@ class OpenAILLM:
         api_key = os.getenv("OPENAI_API_KEY")
         
         if not api_key or api_key == "your-openai-api-key-here":
-            print("⚠️  OpenAI API key not configured. Using fallback mock responses.")
+            print("[WARNING] OpenAI API key not configured. Using fallback mock responses.")
             self.client = None
         else:
             # Use Langfuse-instrumented OpenAI client for automatic tracing

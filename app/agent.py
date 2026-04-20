@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+import os
 from dataclasses import dataclass
 
 from . import metrics
@@ -43,14 +44,15 @@ Please provide a helpful and accurate response based on the context provided. If
         latency_ms = int((time.perf_counter() - started) * 1000)
         cost_usd = self._estimate_cost(response.usage.input_tokens, response.usage.output_tokens, response.model)
 
-        # Update Langfuse context with metadata
+        # Update Langfuse context with metadata (Langfuse v4 API)
         langfuse_context.update_current_span(
             metadata={
+                "tags": [feature, os.getenv("APP_ENV", "dev")],
                 "user_id_hash": hash_user_id(user_id),
                 "session_id": session_id,
                 "feature": feature,
                 "model": response.model,
-                "doc_count": len(docs), 
+                "doc_count": len(docs),
                 "query_preview": summarize_text(message),
                 "tokens_in": response.usage.input_tokens,
                 "tokens_out": response.usage.output_tokens,
