@@ -18,7 +18,7 @@ from .metrics import record_error, snapshot
 from .middleware import CorrelationIdMiddleware
 from .pii import hash_user_id, summarize_text
 from .schemas import ChatRequest, ChatResponse
-from .tracing import tracing_enabled
+from .tracing import trace_id_from_correlation_id, tracing_enabled
 
 configure_logging()
 log = get_logger()
@@ -74,11 +74,14 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
         payload={"message_preview": summarize_text(body.message)},
     )
     try:
+        correlation_id = request.state.correlation_id
         result = agent.run(
             user_id=body.user_id,
             feature=body.feature,
             session_id=body.session_id,
             message=body.message,
+            correlation_id=correlation_id,
+            langfuse_trace_id=trace_id_from_correlation_id(correlation_id),
         )
         log.info(
             "response_sent",

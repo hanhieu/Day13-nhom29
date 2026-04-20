@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
-from typing import Optional
 
 from openai import OpenAI
 from langfuse.openai import openai as langfuse_openai
@@ -36,7 +35,17 @@ class OpenAILLM:
             # Use Langfuse-instrumented OpenAI client for automatic tracing
             self.client = langfuse_openai.OpenAI(api_key=api_key)
 
-    def generate(self, prompt: str) -> LLMResponse:
+    def generate(
+        self,
+        prompt: str,
+        *,
+        correlation_id: str = "",
+        session_id: str = "",
+        user_id: str = "",
+        feature: str = "",
+        trace_id: str | None = None,
+        parent_observation_id: str | None = None,
+    ) -> LLMResponse:
         """Generate a response using OpenAI API or fallback to mock"""
         
         if self.client is None:
@@ -69,12 +78,24 @@ class OpenAILLM:
                 raise RuntimeError("Simulated tool failure - OpenAI API error")
             
             # Make the API call
+            metadata = {
+                "correlation_id": correlation_id,
+                "feature": feature,
+                # Langfuse docs: these keys in metadata set trace/session attributes.
+                "langfuse_session_id": session_id,
+                "langfuse_user_id": user_id,
+                "langfuse_tags": [t for t in [feature, correlation_id] if t],
+            }
+
             response = self.client.chat.completions.create(
                 model=model_to_use,
                 messages=messages,
                 max_tokens=150,
                 temperature=0.7,
-                # Langfuse will automatically capture this
+                name=correlation_id or "OpenAI-generation",
+                metadata=metadata,
+                trace_id=trace_id,
+                parent_observation_id=parent_observation_id,
             )
             
             # Extract response data
