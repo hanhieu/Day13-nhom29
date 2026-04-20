@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             padding: 20px;
             background-color: #f5f5f5;
         }
+
         .dashboard {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -19,61 +21,101 @@
             max-width: 1400px;
             margin: 0 auto;
         }
+
         .panel {
             background: white;
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .panel.latency { border-left: 4px solid #3f51b5; }
-        .panel.traffic { border-left: 4px solid #2196f3; }
-        .panel.error { border-left: 4px solid #f44336; }
-        .panel.cost { border-left: 4px solid #ff9800; }
-        .panel.tokens { border-left: 4px solid #4caf50; }
-        .panel.hallucination { border-left: 4px solid #e91e63; }
+
+        .panel.latency {
+            border-left: 4px solid #3f51b5;
+        }
+
+        .panel.traffic {
+            border-left: 4px solid #2196f3;
+        }
+
+        .panel.error {
+            border-left: 4px solid #f44336;
+        }
+
+        .panel.cost {
+            border-left: 4px solid #ff9800;
+        }
+
+        .panel.tokens {
+            border-left: 4px solid #4caf50;
+        }
+
+        .panel.hallucination {
+            border-left: 4px solid #e91e63;
+        }
+
         .panel h3 {
             margin: 0 0 15px 0;
             color: #333;
             font-size: 16px;
         }
+
         .metric-value {
             font-size: 24px;
             font-weight: bold;
             color: #2196F3;
         }
+
         .metric-unit {
             font-size: 14px;
             color: #666;
             margin-left: 5px;
         }
+
         .threshold-line {
             border-top: 2px dashed #ff4444;
             margin: 10px 0;
         }
+
         .slo-indicator {
             padding: 5px 10px;
             border-radius: 4px;
             font-size: 12px;
             margin-top: 10px;
         }
-        .slo-good { background-color: #4CAF50; color: white; }
-        .slo-warning { background-color: #FF9800; color: white; }
-        .slo-bad { background-color: #F44336; color: white; }
+
+        .slo-good {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .slo-warning {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .slo-bad {
+            background-color: #F44336;
+            color: white;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .refresh-info {
             text-align: center;
             color: #666;
             margin-bottom: 20px;
         }
+
         .chart-container {
             position: relative;
             height: 200px;
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>Day 13 Observability Lab - Production Dashboard</h1>
@@ -87,229 +129,230 @@
             <div class="chart-container">
                 <canvas id="latencyChart"></canvas>
             </div>
-            <div class="slo-indicator" id="latencySLO">SLO: P95 < 3000ms</div>
-        </div>
-
-        <!-- Panel 2: Request Traffic -->
-        <div class="panel traffic">
-            <h3>📊 Traffic (QPS)</h3>
-            <div class="metric-value" id="trafficValue">0</div>
-            <span class="metric-unit">total requests</span>
-            <div class="chart-container" style="margin-top: 15px;">
-                <canvas id="trafficChart"></canvas>
+            <div class="slo-indicator" id="latencySLO">SLO: P95 < 5000ms</div>
             </div>
-        </div>
 
-        <!-- Panel 3: Error Rate -->
-        <div class="panel error">
-            <h3>⚠️ Error Rate %</h3>
-            <div class="metric-value" id="errorRateValue">0%</div>
-            <div class="chart-container" style="margin-top: 15px;">
-                <canvas id="errorChart"></canvas>
+            <!-- Panel 2: Request Traffic -->
+            <div class="panel traffic">
+                <h3>📊 Traffic (QPS)</h3>
+                <div class="metric-value" id="trafficValue">0</div>
+                <span class="metric-unit">total requests</span>
+                <div class="chart-container" style="margin-top: 15px;">
+                    <canvas id="trafficChart"></canvas>
+                </div>
             </div>
-            <div class="slo-indicator" id="errorSLO">SLO: Error Rate < 2%</div>
-        </div>
 
-        <!-- Panel 4: Cost Over Time -->
-        <div class="panel cost">
-            <h3>💰 Cost $/hour</h3>
-            <div class="metric-value" id="costValue">$0.00</div>
-            <span class="metric-unit">total cost</span>
-            <div class="chart-container" style="margin-top: 15px;">
-                <canvas id="costChart"></canvas>
-            </div>
-            <div class="slo-indicator" id="costSLO">Budget: $2.50/day</div>
-        </div>
+            <!-- Panel 3: Error Rate -->
+            <div class="panel error">
+                <h3>⚠️ Error Rate %</h3>
+                <div class="metric-value" id="errorRateValue">0%</div>
+                <div class="chart-container" style="margin-top: 15px;">
+                    <canvas id="errorChart"></canvas>
+                </div>
+                <div class="slo-indicator" id="errorSLO">SLO: Error Rate < 5%</div>
+                </div>
 
-        <!-- Panel 5: Token Usage -->
-        <div class="panel tokens">
-            <h3>🔤 Tokens in/out</h3>
-            <div class="metric-value" id="tokensValue">0</div>
-            <span class="metric-unit">total tokens</span>
-            <div class="chart-container" style="margin-top: 15px;">
-                <canvas id="tokensChart"></canvas>
-            </div>
-        </div>
+                <!-- Panel 4: Cost Over Time -->
+                <div class="panel cost">
+                    <h3>💰 Cost $/hour</h3>
+                    <div class="metric-value" id="costValue">$0.00</div>
+                    <span class="metric-unit">total cost</span>
+                    <div class="chart-container" style="margin-top: 15px;">
+                        <canvas id="costChart"></canvas>
+                    </div>
+                    <div class="slo-indicator" id="costSLO">Budget: $5.00/day</div>
+                </div>
 
-        <!-- Panel 6: Hallucination % -->
-        <div class="panel hallucination">
-            <h3>🔍 Hallucination %</h3>
-            <div class="metric-value" id="hallucinationValue">0.0%</div>
-            <span class="metric-unit">sampled, weekly</span>
-            <div class="chart-container" style="margin-top: 15px;">
-                <canvas id="hallucinationChart"></canvas>
-            </div>
-            <div class="slo-indicator" id="hallucinationSLO">Target: Hallucination < 25%</div>
-        </div>
-    </div>
+                <!-- Panel 5: Token Usage -->
+                <div class="panel tokens">
+                    <h3>🔤 Tokens in/out</h3>
+                    <div class="metric-value" id="tokensValue">0</div>
+                    <span class="metric-unit">total tokens</span>
+                    <div class="chart-container" style="margin-top: 15px;">
+                        <canvas id="tokensChart"></canvas>
+                    </div>
+                </div>
 
-    <script>
-        // Chart configurations
-        const charts = {};
-        
-        // Initialize charts
-        function initCharts() {
-            // Latency Chart
-            charts.latency = new Chart(document.getElementById('latencyChart'), {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [
-                        { label: 'P50', data: [], borderColor: '#4CAF50', fill: false },
-                        { label: 'P95', data: [], borderColor: '#FF9800', fill: false },
-                        { label: 'P99', data: [], borderColor: '#F44336', fill: false }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true } },
-                    scales: { y: { beginAtZero: true, title: { display: true, text: 'ms' } } }
-                }
-            });
+                <!-- Panel 6: Hallucination % -->
+                <div class="panel hallucination">
+                    <h3>🔍 Hallucination %</h3>
+                    <div class="metric-value" id="hallucinationValue">0.0%</div>
+                    <span class="metric-unit">sampled, weekly</span>
+                    <div class="chart-container" style="margin-top: 15px;">
+                        <canvas id="hallucinationChart"></canvas>
+                    </div>
+                    <div class="slo-indicator" id="hallucinationSLO">Target: Hallucination < 25%</div>
+                    </div>
+                </div>
 
-            // Traffic Chart
-            charts.traffic = new Chart(document.getElementById('trafficChart'), {
-                type: 'bar',
-                data: { labels: [], datasets: [{ label: 'Requests', data: [], backgroundColor: '#2196F3' }] },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
+                <script>
+                    // Chart configurations
+                    const charts = {};
 
-            // Error Chart
-            charts.error = new Chart(document.getElementById('errorChart'), {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: 'Error Rate %', data: [], borderColor: '#F44336', fill: false }] },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, max: 10 } }
-                }
-            });
+                    // Initialize charts
+                    function initCharts() {
+                        // Latency Chart
+                        charts.latency = new Chart(document.getElementById('latencyChart'), {
+                            type: 'line',
+                            data: {
+                                labels: [],
+                                datasets: [
+                                    { label: 'P50', data: [], borderColor: '#4CAF50', fill: false },
+                                    { label: 'P95', data: [], borderColor: '#FF9800', fill: false },
+                                    { label: 'P99', data: [], borderColor: '#F44336', fill: false }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: true } },
+                                scales: { y: { beginAtZero: true, title: { display: true, text: 'ms' } } }
+                            }
+                        });
 
-            // Cost Chart
-            charts.cost = new Chart(document.getElementById('costChart'), {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: 'Cost USD', data: [], borderColor: '#4CAF50', fill: true, backgroundColor: 'rgba(76, 175, 80, 0.1)' }] },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
+                        // Traffic Chart
+                        charts.traffic = new Chart(document.getElementById('trafficChart'), {
+                            type: 'bar',
+                            data: { labels: [], datasets: [{ label: 'Requests', data: [], backgroundColor: '#2196F3' }] },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true } }
+                            }
+                        });
 
-            // Tokens Chart
-            charts.tokens = new Chart(document.getElementById('tokensChart'), {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [
-                        { label: 'Tokens In', data: [], backgroundColor: '#2196F3' },
-                        { label: 'Tokens Out', data: [], backgroundColor: '#FF9800' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true } },
-                    scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
-                }
-            });
+                        // Error Chart
+                        charts.error = new Chart(document.getElementById('errorChart'), {
+                            type: 'line',
+                            data: { labels: [], datasets: [{ label: 'Error Rate %', data: [], borderColor: '#F44336', fill: false }] },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true, max: 10 } }
+                            }
+                        });
 
-            // Hallucination Chart
-            charts.hallucination = new Chart(document.getElementById('hallucinationChart'), {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: 'Hallucination %', data: [], borderColor: '#F44336', fill: false }] },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, max: 100 } }
-                }
-            });
-        }
+                        // Cost Chart
+                        charts.cost = new Chart(document.getElementById('costChart'), {
+                            type: 'line',
+                            data: { labels: [], datasets: [{ label: 'Cost USD', data: [], borderColor: '#4CAF50', fill: true, backgroundColor: 'rgba(76, 175, 80, 0.1)' }] },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true } }
+                            }
+                        });
 
-        // Fetch and update metrics
-        async function updateMetrics() {
-            try {
-                const response = await fetch('http://127.0.0.1:8001/metrics');
-                const data = await response.json();
-                
-                // Update metric values
-                document.getElementById('trafficValue').textContent = data.traffic;
-                document.getElementById('errorRateValue').textContent = data.error_rate_pct + '%';
-                document.getElementById('costValue').textContent = '$' + data.total_cost_usd.toFixed(4);
-                document.getElementById('tokensValue').textContent = (data.tokens_in_total + data.tokens_out_total).toLocaleString();
-                document.getElementById('hallucinationValue').textContent = ((1 - data.quality_avg) * 100).toFixed(1) + '%';
+                        // Tokens Chart
+                        charts.tokens = new Chart(document.getElementById('tokensChart'), {
+                            type: 'bar',
+                            data: {
+                                labels: [],
+                                datasets: [
+                                    { label: 'Tokens In', data: [], backgroundColor: '#2196F3' },
+                                    { label: 'Tokens Out', data: [], backgroundColor: '#FF9800' }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: true } },
+                                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+                            }
+                        });
 
-                // Update SLO indicators
-                updateSLOIndicator('latencySLO', data.latency_p95 <= 3000);
-                updateSLOIndicator('errorSLO', data.error_rate_pct <= 2);
-                updateSLOIndicator('costSLO', data.total_cost_usd <= 2.5);
-                updateSLOIndicator('hallucinationSLO', ((1 - data.quality_avg) * 100) <= 25);
+                        // Hallucination Chart
+                        charts.hallucination = new Chart(document.getElementById('hallucinationChart'), {
+                            type: 'line',
+                            data: { labels: [], datasets: [{ label: 'Hallucination %', data: [], borderColor: '#F44336', fill: false }] },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true, max: 100 } }
+                            }
+                        });
+                    }
 
-                // Update charts with timeseries data
-                if (data.timeseries && data.timeseries.length > 0) {
-                    updateCharts(data.timeseries);
-                }
+                    // Fetch and update metrics
+                    async function updateMetrics() {
+                        try {
+                            const response = await fetch('http://127.0.0.1:8001/metrics');
+                            const data = await response.json();
 
-            } catch (error) {
-                console.error('Failed to fetch metrics:', error);
-            }
-        }
+                            // Update metric values
+                            document.getElementById('trafficValue').textContent = data.traffic;
+                            document.getElementById('errorRateValue').textContent = data.error_rate_pct + '%';
+                            document.getElementById('costValue').textContent = '$' + data.total_cost_usd.toFixed(4);
+                            document.getElementById('tokensValue').textContent = (data.tokens_in_total + data.tokens_out_total).toLocaleString();
+                            document.getElementById('hallucinationValue').textContent = ((1 - data.quality_avg) * 100).toFixed(1) + '%';
 
-        function updateSLOIndicator(elementId, isGood) {
-            const element = document.getElementById(elementId);
-            element.className = 'slo-indicator ' + (isGood ? 'slo-good' : 'slo-bad');
-        }
+                            // Update SLO indicators
+                            updateSLOIndicator('latencySLO', data.latency_p95 <= 3000);
+                            updateSLOIndicator('errorSLO', data.error_rate_pct <= 2);
+                            updateSLOIndicator('costSLO', data.total_cost_usd <= 2.5);
+                            updateSLOIndicator('hallucinationSLO', ((1 - data.quality_avg) * 100) <= 25);
 
-        function updateCharts(timeseries) {
-            const labels = timeseries.map(d => new Date(d.timestamp * 1000).toLocaleTimeString());
-            
-            // Update latency chart
-            charts.latency.data.labels = labels;
-            charts.latency.data.datasets[0].data = timeseries.map(d => d.latency_p50);
-            charts.latency.data.datasets[1].data = timeseries.map(d => d.latency_p95);
-            charts.latency.data.datasets[2].data = timeseries.map(d => d.latency_p99);
-            charts.latency.update();
+                            // Update charts with timeseries data
+                            if (data.timeseries && data.timeseries.length > 0) {
+                                updateCharts(data.timeseries);
+                            }
 
-            // Update traffic chart
-            charts.traffic.data.labels = labels;
-            charts.traffic.data.datasets[0].data = timeseries.map(d => d.requests);
-            charts.traffic.update();
+                        } catch (error) {
+                            console.error('Failed to fetch metrics:', error);
+                        }
+                    }
 
-            // Update error chart
-            charts.error.data.labels = labels;
-            charts.error.data.datasets[0].data = timeseries.map(d => d.error_rate);
-            charts.error.update();
+                    function updateSLOIndicator(elementId, isGood) {
+                        const element = document.getElementById(elementId);
+                        element.className = 'slo-indicator ' + (isGood ? 'slo-good' : 'slo-bad');
+                    }
 
-            // Update cost chart
-            charts.cost.data.labels = labels;
-            charts.cost.data.datasets[0].data = timeseries.map(d => d.avg_cost);
-            charts.cost.update();
+                    function updateCharts(timeseries) {
+                        const labels = timeseries.map(d => new Date(d.timestamp * 1000).toLocaleTimeString());
 
-            // Update tokens chart
-            charts.tokens.data.labels = labels;
-            charts.tokens.data.datasets[0].data = timeseries.map(d => d.tokens_in);
-            charts.tokens.data.datasets[1].data = timeseries.map(d => d.tokens_out);
-            charts.tokens.update();
+                        // Update latency chart
+                        charts.latency.data.labels = labels;
+                        charts.latency.data.datasets[0].data = timeseries.map(d => d.latency_p50);
+                        charts.latency.data.datasets[1].data = timeseries.map(d => d.latency_p95);
+                        charts.latency.data.datasets[2].data = timeseries.map(d => d.latency_p99);
+                        charts.latency.update();
 
-            // Update hallucination chart
-            charts.hallucination.data.labels = labels;
-            charts.hallucination.data.datasets[0].data = timeseries.map(d => ((1 - d.quality_avg) * 100));
-            charts.hallucination.update();
-        }
+                        // Update traffic chart
+                        charts.traffic.data.labels = labels;
+                        charts.traffic.data.datasets[0].data = timeseries.map(d => d.requests);
+                        charts.traffic.update();
 
-        // Initialize and start auto-refresh
-        initCharts();
-        updateMetrics();
-        setInterval(updateMetrics, 30000); // Refresh every 30 seconds
-    </script>
+                        // Update error chart
+                        charts.error.data.labels = labels;
+                        charts.error.data.datasets[0].data = timeseries.map(d => d.error_rate);
+                        charts.error.update();
+
+                        // Update cost chart
+                        charts.cost.data.labels = labels;
+                        charts.cost.data.datasets[0].data = timeseries.map(d => d.avg_cost);
+                        charts.cost.update();
+
+                        // Update tokens chart
+                        charts.tokens.data.labels = labels;
+                        charts.tokens.data.datasets[0].data = timeseries.map(d => d.tokens_in);
+                        charts.tokens.data.datasets[1].data = timeseries.map(d => d.tokens_out);
+                        charts.tokens.update();
+
+                        // Update hallucination chart
+                        charts.hallucination.data.labels = labels;
+                        charts.hallucination.data.datasets[0].data = timeseries.map(d => ((1 - d.quality_avg) * 100));
+                        charts.hallucination.update();
+                    }
+
+                    // Initialize and start auto-refresh
+                    initCharts();
+                    updateMetrics();
+                    setInterval(updateMetrics, 30000); // Refresh every 30 seconds
+                </script>
 </body>
+
 </html>
