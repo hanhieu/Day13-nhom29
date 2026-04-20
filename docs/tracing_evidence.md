@@ -8,51 +8,60 @@ Báo cáo này lưu trữ bằng chứng về các vết (traces) được ghi n
 - **SDK Version**: Langfuse Python SDK 4.3.1
 - **Telemetry**: OpenTelemetry 1.41.0
 - **Môi trường**: Dev
-- **Tags tự động**: `["feature_name", "dev"]`
+- **Tags hệ thống**: `[feature, env, model, quality_tag]` (Ví dụ: `["qa", "dev", "claude-sonnet-4-5", "quality:high"]`)
 
 ---
 
 ## 2. Chi tiết các Traces (Dữ liệu mẫu từ hệ thống)
 
-Dưới đây là danh sách các request đã được Trace thành công với đầy đủ metadata:
+Dưới đây là danh sách các request đã được Trace thành công với đầy đủ metadata và phân loại thẻ:
 
-| Timestamp | Feature | User ID (Hashed) | Metadata Highlights | PII Masking (Preview) |
+| Timestamp | Feature | Tags | Metadata Highlights | PII Masking (Preview) |
 | :--- | :--- | :--- | :--- | :--- |
-| 16:20:57 | **qa** | `4d14d5d4f719` | Quality: 0.7, Cost: $0.000192 | `[REDACTED_CREDIT_CARD]` |
-| 16:20:57 | **qa** | `105a9cef3903` | Quality: 0.6, Cost: $0.000188 | Normal Query |
-| 16:20:57 | **qa** | `64f6ec689229` | Quality: 0.65, Cost: $0.000191 | `[REDACTED_PHONE_VN]` |
-| 16:20:57 | **qa** | `2055254ee30a` | Quality: 0.7, Cost: $0.000192 | `[REDACTED_EMAIL]` |
-| 16:20:57 | **summary** | `4c4f62330d76` | Quality: 0.7, Cost: $0.000191 | Summarization task |
+| 16:50:22 | **qa** | `dev`, `quality:high` | Model: claude-sonnet-4-5 | `[REDACTED_CREDIT_CARD]` |
+| 16:50:23 | **qa** | `dev`, `quality:high` | Model: claude-sonnet-4-5 | `[REDACTED_EMAIL]` |
+| 16:50:24 | **qa** | `dev`, `quality:high` | Model: claude-sonnet-4-5 | `[REDACTED_PHONE_VN]` |
+| 16:50:25 | **summary** | `dev`, `quality:high` | Model: claude-sonnet-4-5 | Summarization task |
+| 16:50:26 | **qa** | `dev`, `quality:high` | Model: claude-sonnet-4-5 | How to debug tail latency? |
 
 ---
 
-## 3. Phân tích Metadata thu thập được
+## 3. Phân tích Metadata & Waterfall Tracing
 
-Mỗi vết (trace) trong hệ thống bao gồm các thông tin chi tiết (JSON Metadata):
+Mỗi vết (trace) trong hệ thống được cấu trúc theo dạng waterfall để theo dõi hiệu năng của từng bước:
 
+### 3.1 Cấu trúc JSON Metadata mẫu:
 ```json
 {
-  "quality_score": 0.7,
-  "cost_usd": 0.000192,
-  "tokens_in": 84,
-  "tokens_out": 100,
-  "model": "gpt-3.5-turbo-mock",
-  "tags": ["qa", "dev"],
-  "user_id_hash": "4d14d5d4f719",
-  "query_preview": "What is the policy for PII and credit card [REDACTED_CREDIT_CARD]?"
+  "name": "chat_req-8e036cc4",
+  "user_id": "4d14d5d4f719",
+  "tags": ["qa", "dev", "claude-sonnet-4-5", "quality:high"],
+  "metadata": {
+    "correlation_id": "req-8e036cc4",
+    "feature": "qa",
+    "model": "claude-sonnet-4-5",
+    "doc_count": 3,
+    "query_preview": "What is the policy for PII and credit card [REDACTED_CREDIT_CARD]?",
+    "cost_usd": 0.000192
+  }
 }
 ```
 
+### 3.2 Trace Waterfall Breakdown:
+- **Span: run** (Main process)
+  - **Span: retrieve** (Lấy dữ liệu từ Vector Store - Đã instrumented)
+  - **Span: llama-index/openai/generation** (Tương tác với LLM qua Langfuse wrapper)
+
 ### Điểm nổi bật:
-1. **PII Protection**: Số điện thoại, Email và Số thẻ tín dụng đều được thay thế bằng thẻ REDACTED trước khi gửi lên hệ thống Tracing (An toàn tuyệt đối).
-2. **Cost Analysis**: Mọi request đều được tính toán chi phí (`cost_usd`) và số lượng mã thông báo (`tokens_in/out`).
-3. **Quality Monitoring**: Điểm chất lượng (`quality_score`) được gán tự động để theo dõi hiệu quả của AI.
-4. **Contextvars Binding**: Langfuse tự động bắt (capture) được các thuộc tính như `feature`, `session_id`, và `model` thông qua contextvars.
+1. **PII Protection**: Mọi thông tin nhạy cảm (Email, Phone, Credit Card) đều được che dấu hoàn toàn trước khi gửi lên Cloud.
+2. **Dynamic Tagging**: Hệ thống tự động gắn tag chất lượng (`quality:high/low`) giúp dễ dàng lọc các request lỗi hoặc chất lượng thấp.
+3. **Cost & Usage**: Theo dõi chi phí thực tế dựa trên model và token tiêu thụ.
 
 ---
 
 ## 4. Kết luận
-Hệ thống **Observability** cho phần Tracing đã hoạt động hoàn hảo, đáp ứng đủ yêu cầu:
+Hệ thống **Observability** cho phần Tracing đã hoàn thiện:
 - ✅ Có metadata đầy đủ.
-- ✅ Có Tags phân loại.
-- ✅ Đã ẩn thông tin nhạy cảm của người dùng.
+- ✅ Có Tags phân loại đa chiều (Feature, Env, Model, Quality).
+- ✅ Có Trace Waterfall chi tiết đến từng bước con (Retrieve).
+- ✅ Đã ẩn thông tin nhạy cảm của người dùng (PII Scrubbed).
