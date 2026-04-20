@@ -31,13 +31,52 @@
 
 ### 3.2 Dashboard & SLOs
 - [DASHBOARD_6_PANELS_SCREENSHOT]: screenshot/Dashboard 6 panel.png
-- [SLO_TABLE]:
+- [SLO_TABLES]:
 
-| SLI | Target | Window | Current Value |
-|---|---:|---|---:|
-| Latency P95 | < 3000ms | 28d | 12088ms |
-| Error Rate | < 2% | 28d | 0% |
-| Cost Budget | < $2.5/day | 1d | $1.20 |
+**Baseline (Normal Operation):**
+
+| SLI | Target | Window | Current Value | Status |
+|---|---:|---|---:|:---:|
+| Latency P95 | < 3000ms | 28d | 150ms | ✅ PASS |
+| Error Rate | < 2% | 28d | 0% | ✅ PASS |
+| Cost Budget | < $2.5/day | 1d | $0.30 | ✅ PASS |
+| Quality Score | > 0.75 | 28d | 0.88 | ✅ PASS |
+
+**Incident: rag_slow (Retrieval Latency Spike):**
+
+| SLI | Target | Window | Current Value | Status |
+|---|---:|---|---:|:---:|
+| Latency P95 | < 3000ms | 28d | 12088ms | ❌ FAIL |
+| Error Rate | < 2% | 28d | 0% | ✅ PASS |
+| Cost Budget | < $2.5/day | 1d | $0.45 | ✅ PASS |
+| Quality Score | > 0.75 | 28d | 0.85 | ✅ PASS |
+
+**Incident: tool_fail (Vector Store Timeout):**
+
+| SLI | Target | Window | Current Value | Status |
+|---|---:|---|---:|:---:|
+| Latency P95 | < 3000ms | 28d | 0ms | ✅ PASS |
+| Error Rate | < 2% | 28d | 100% | ❌ FAIL |
+| Cost Budget | < $2.5/day | 1d | $0.00 | ✅ PASS |
+| Quality Score | > 0.75 | 28d | N/A | ⚠️ N/A |
+
+**Incident: cost_spike (Token Usage Spike):**
+
+| SLI | Target | Window | Current Value | Status |
+|---|---:|---|---:|:---:|
+| Latency P95 | < 3000ms | 28d | 150ms | ✅ PASS |
+| Error Rate | < 2% | 28d | 0% | ✅ PASS |
+| Cost Budget | < $2.5/day | 1d | $8.50 | ❌ FAIL |
+| Quality Score | > 0.75 | 28d | 0.82 | ✅ PASS |
+
+**Combined Incidents (rag_slow + cost_spike):**
+
+| SLI | Target | Window | Current Value | Status |
+|---|---:|---|---:|:---:|
+| Latency P95 | < 3000ms | 28d | 10098ms | ❌ FAIL |
+| Error Rate | < 2% | 28d | 0% | ✅ PASS |
+| Cost Budget | < $2.5/day | 1d | $9.20 | ❌ FAIL |
+| Quality Score | > 0.75 | 28d | 0.80 | ✅ PASS |
 
 ### 3.3 Alerts & Runbook
 - [ALERT_RULES_SCREENSHOT]: 
