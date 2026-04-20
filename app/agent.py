@@ -51,7 +51,7 @@ Please provide a helpful and accurate response based on the context provided. If
             }
         )
         
-        langfuse_context.update_current_span(
+        langfuse_context.update_current_observation(
             metadata={
                 "correlation_id": correlation_id,  # Add correlation ID to Langfuse
                 "user_id_hash": hash_user_id(user_id),
