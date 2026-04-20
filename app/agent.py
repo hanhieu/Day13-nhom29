@@ -44,12 +44,15 @@ Please provide a helpful and accurate response based on the context provided. If
         latency_ms = int((time.perf_counter() - started) * 1000)
         cost_usd = self._estimate_cost(response.usage.input_tokens, response.usage.output_tokens, response.model)
 
+        # Determine quality tag for easier filtering in Langfuse
+        quality_tag = "quality:high" if quality_score >= 0.7 else "quality:low"
+
         # Update Langfuse trace with metadata and tags
         langfuse_context.update_current_trace(
-            name=f"chat_{correlation_id}" if correlation_id else None,
+            name=f"chat_{correlation_id}" if correlation_id else "chat_request",
             user_id=hash_user_id(user_id),
             session_id=session_id,
-            tags=[feature, os.getenv("APP_ENV", "dev")],
+            tags=[feature, os.getenv("APP_ENV", "dev"), response.model, quality_tag],
             metadata={
                 "correlation_id": correlation_id,
                 "feature": feature,
