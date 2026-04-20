@@ -11,6 +11,12 @@ PII_PATTERNS: dict[str, str] = {
     # TODO: Add more patterns (e.g., Passport, Vietnamese address keywords)
     "passport": r"\b[A-Z][0-9]{7}\b",
     "address_vn": r"\b(?:Phường|Quận|Thành phố|Đường|Ngõ|Ngách|Hẻm|Xã|Huyện|Tỉnh)[A-Za-z0-9\s,]+\b",
+    "ip_address": r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
+    "mac_address": r"\b(?:[0-9A-Fa-f]{2}[:\-]){5}[0-9A-Fa-f]{2}\b",
+    "dob": r"\b(?:0?[1-9]|[12]\d|3[01])[\/\-](?:0?[1-9]|1[0-2])[\/\-](?:19|20)\d{2}\b",  # DD/MM/YYYY or DD-MM-YYYY
+    "bank_account_vn": r"\b\d{9,14}\b",  # Vietnamese bank accounts (9–14 digits)
+    "full_name_vn": r"\b(?:Nguyễn|Trần|Lê|Phạm|Huỳnh|Hoàng|Phan|Vũ|Võ|Đặng|Bùi|Đỗ|Hồ|Ngô|Dương|Lý)\s+[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝĐ][a-zàáâãèéêìíòóôõùúýđ]+(?:\s+[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝĐ][a-zàáâãèéêìíòóôõùúýđ]+)*\b",
+    "license_plate_vn": r"\b\d{2}[A-Z]{1,2}[- ]?\d{4,5}\b",  # e.g. 51A-12345
 }
 
 
