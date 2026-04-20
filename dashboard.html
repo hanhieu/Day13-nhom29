@@ -25,6 +25,12 @@
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        .panel.latency { border-left: 4px solid #3f51b5; }
+        .panel.traffic { border-left: 4px solid #2196f3; }
+        .panel.error { border-left: 4px solid #f44336; }
+        .panel.cost { border-left: 4px solid #ff9800; }
+        .panel.tokens { border-left: 4px solid #4caf50; }
+        .panel.hallucination { border-left: 4px solid #e91e63; }
         .panel h3 {
             margin: 0 0 15px 0;
             color: #333;
@@ -76,8 +82,8 @@
 
     <div class="dashboard">
         <!-- Panel 1: Latency Percentiles -->
-        <div class="panel">
-            <h3>🚀 Latency Percentiles</h3>
+        <div class="panel latency">
+            <h3>🚀 Latency P50/P95/P99</h3>
             <div class="chart-container">
                 <canvas id="latencyChart"></canvas>
             </div>
@@ -85,8 +91,8 @@
         </div>
 
         <!-- Panel 2: Request Traffic -->
-        <div class="panel">
-            <h3>📊 Request Traffic</h3>
+        <div class="panel traffic">
+            <h3>📊 Traffic (QPS)</h3>
             <div class="metric-value" id="trafficValue">0</div>
             <span class="metric-unit">total requests</span>
             <div class="chart-container" style="margin-top: 15px;">
@@ -95,8 +101,8 @@
         </div>
 
         <!-- Panel 3: Error Rate -->
-        <div class="panel">
-            <h3>⚠️ Error Rate & Breakdown</h3>
+        <div class="panel error">
+            <h3>⚠️ Error Rate %</h3>
             <div class="metric-value" id="errorRateValue">0%</div>
             <div class="chart-container" style="margin-top: 15px;">
                 <canvas id="errorChart"></canvas>
@@ -105,8 +111,8 @@
         </div>
 
         <!-- Panel 4: Cost Over Time -->
-        <div class="panel">
-            <h3>💰 Cost Over Time</h3>
+        <div class="panel cost">
+            <h3>💰 Cost $/hour</h3>
             <div class="metric-value" id="costValue">$0.00</div>
             <span class="metric-unit">total cost</span>
             <div class="chart-container" style="margin-top: 15px;">
@@ -116,8 +122,8 @@
         </div>
 
         <!-- Panel 5: Token Usage -->
-        <div class="panel">
-            <h3>🔤 Token Usage (In/Out)</h3>
+        <div class="panel tokens">
+            <h3>🔤 Tokens in/out</h3>
             <div class="metric-value" id="tokensValue">0</div>
             <span class="metric-unit">total tokens</span>
             <div class="chart-container" style="margin-top: 15px;">
@@ -125,15 +131,15 @@
             </div>
         </div>
 
-        <!-- Panel 6: Quality Score -->
-        <div class="panel">
-            <h3>⭐ Quality Score</h3>
-            <div class="metric-value" id="qualityValue">0.00</div>
-            <span class="metric-unit">avg score</span>
+        <!-- Panel 6: Hallucination % -->
+        <div class="panel hallucination">
+            <h3>🔍 Hallucination %</h3>
+            <div class="metric-value" id="hallucinationValue">0.0%</div>
+            <span class="metric-unit">sampled, weekly</span>
             <div class="chart-container" style="margin-top: 15px;">
-                <canvas id="qualityChart"></canvas>
+                <canvas id="hallucinationChart"></canvas>
             </div>
-            <div class="slo-indicator" id="qualitySLO">SLO: Quality > 0.75</div>
+            <div class="slo-indicator" id="hallucinationSLO">Target: Hallucination < 25%</div>
         </div>
     </div>
 
@@ -216,15 +222,15 @@
                 }
             });
 
-            // Quality Chart
-            charts.quality = new Chart(document.getElementById('qualityChart'), {
+            // Hallucination Chart
+            charts.hallucination = new Chart(document.getElementById('hallucinationChart'), {
                 type: 'line',
-                data: { labels: [], datasets: [{ label: 'Quality Score', data: [], borderColor: '#9C27B0', fill: false }] },
+                data: { labels: [], datasets: [{ label: 'Hallucination %', data: [], borderColor: '#F44336', fill: false }] },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, max: 1 } }
+                    scales: { y: { beginAtZero: true, max: 100 } }
                 }
             });
         }
@@ -240,13 +246,13 @@
                 document.getElementById('errorRateValue').textContent = data.error_rate_pct + '%';
                 document.getElementById('costValue').textContent = '$' + data.total_cost_usd.toFixed(4);
                 document.getElementById('tokensValue').textContent = (data.tokens_in_total + data.tokens_out_total).toLocaleString();
-                document.getElementById('qualityValue').textContent = data.quality_avg.toFixed(2);
+                document.getElementById('hallucinationValue').textContent = ((1 - data.quality_avg) * 100).toFixed(1) + '%';
 
                 // Update SLO indicators
                 updateSLOIndicator('latencySLO', data.latency_p95 <= 3000);
                 updateSLOIndicator('errorSLO', data.error_rate_pct <= 2);
                 updateSLOIndicator('costSLO', data.total_cost_usd <= 2.5);
-                updateSLOIndicator('qualitySLO', data.quality_avg >= 0.75);
+                updateSLOIndicator('hallucinationSLO', ((1 - data.quality_avg) * 100) <= 25);
 
                 // Update charts with timeseries data
                 if (data.timeseries && data.timeseries.length > 0) {
@@ -294,10 +300,10 @@
             charts.tokens.data.datasets[1].data = timeseries.map(d => d.tokens_out);
             charts.tokens.update();
 
-            // Update quality chart
-            charts.quality.data.labels = labels;
-            charts.quality.data.datasets[0].data = timeseries.map(d => d.quality_avg);
-            charts.quality.update();
+            // Update hallucination chart
+            charts.hallucination.data.labels = labels;
+            charts.hallucination.data.datasets[0].data = timeseries.map(d => ((1 - d.quality_avg) * 100));
+            charts.hallucination.update();
         }
 
         // Initialize and start auto-refresh
